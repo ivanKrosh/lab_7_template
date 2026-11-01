@@ -5,7 +5,6 @@
         Step2_modes.exe table               таблиця: 5 випадків x 4 режими
         Step2_modes.exe open <файл> <режим> відкрити один файл і закрити
         Step2_modes.exe three               номери дескрипторів трьох потоків
-        Step2_modes.exe limit               скільки потоків можна відкрити одночасно
 
     Програма лише відкриває й закриває файли - нічого в них не пише.
     Для таблиці вона створює теку modes_test у поточному каталозі.
@@ -18,8 +17,6 @@
 #include <io.h>
 #include <sys/stat.h>
 #include <windows.h>
-
-#define MAX_STREAMS 1000
 
 /* Розмір файлу в байтах або -1, якщо файлу немає (службова функція) */
 static long long file_size(const char *path)
@@ -143,28 +140,6 @@ static int three(void)
     return 0;
 }
 
-static FILE *streams[MAX_STREAMS];
-
-static int limit(void)
-{
-    int n = 0;
-    while (n < MAX_STREAMS) {
-        FILE *f = fopen("limit.txt", "a");
-        if (f == NULL) {
-            int e = errno;
-            printf("opened %d streams, then fopen returned NULL\n", n);
-            printf("errno = %d: %s\n", e, strerror(e));
-            break;
-        }
-        streams[n++] = f;
-    }
-    printf("last descriptor = %d\n", _fileno(streams[n - 1]));
-    for (int i = 0; i < n; i++) {
-        fclose(streams[i]);
-    }
-    return 0;
-}
-
 int main(int argc, char *argv[])
 {
     if (argc == 2 && strcmp(argv[1], "table") == 0) {
@@ -176,9 +151,6 @@ int main(int argc, char *argv[])
     if (argc == 2 && strcmp(argv[1], "three") == 0) {
         return three();
     }
-    if (argc == 2 && strcmp(argv[1], "limit") == 0) {
-        return limit();
-    }
-    fprintf(stderr, "usage: %s table | open <file> <mode> | three | limit\n", argv[0]);
+    fprintf(stderr, "usage: %s table | open <file> <mode> | three\n", argv[0]);
     return 2;
 }

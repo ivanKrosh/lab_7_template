@@ -1,7 +1,7 @@
 /*
     Лабораторна робота №7, крок 3. Функції читання й запису.
 
-    У верхній частині - п'ять функцій із заготовками, які треба написати за контрактами
+    У верхній частині - три функції із заготовками, які треба написати за контрактами
     в коментарях. У нижній - перевірки: їх змінювати не можна.
     Перевірки створюють тестові файли t_*.txt у поточному каталозі.
 */
@@ -56,28 +56,6 @@ int load_marks(FILE *f, char names[][NAME_LEN], int marks[], int cap, int bad[1]
 void save_report(FILE *out, char names[][NAME_LEN], const int marks[], int n)
 {
     (void)out; (void)names; (void)marks; (void)n;
-}
-
-/*
-    4. Дописати рядок text і '\n' у кінець файлу path (файлу немає - створити).
-       Файл відкривається й закривається всередині функції.
-       Повертає 0 - успіх, -1 - файл не відкрився.
-*/
-int append_line(const char *path, const char *text)
-{
-    (void)path; (void)text;
-    return 0;
-}
-
-/*
-    5. Переписати з in в out записи з оцінкою не нижче pass у вигляді "%s %d\n".
-       Правила читання - ті самі, що в load_marks; зіпсовані рядки пропускаються.
-       Повертає кількість записаних записів.
-*/
-int filter_marks(FILE *in, FILE *out, int pass)
-{
-    (void)in; (void)out; (void)pass;
-    return 0;
 }
 
 /* ================= ПЕРЕВІРКИ: НЕ ЗМІНЮЙТЕ НІЧОГО НИЖЧЕ ================= */
@@ -228,28 +206,6 @@ int main(void)
                  "--------------\n"
                  "average     66.0\n") == 0);
     CHECK(strcmp(report_of(0, buf, sizeof buf), "no data\n") == 0);
-
-    /* 4. append_line */
-    remove("t_log.txt");
-    CHECK(append_line("t_log.txt", "one") == 0);
-    CHECK(append_line("t_log.txt", "two") == 0);
-    CHECK(strcmp(read_all("t_log.txt", buf, sizeof buf), "one\ntwo\n") == 0);
-    CHECK(append_line("nodir\\t_log.txt", "three") == -1);
-
-    /* 5. filter_marks */
-    make_file("t_in.txt", "Bondar 74\r\nHnatiuk 58\r\nMelnyk abc\r\nSavchuk 60\r\n");
-    FILE *in = fopen("t_in.txt", "r");
-    FILE *out = fopen("t_out.txt", "w");
-    if (in != NULL && out != NULL) {
-        n = filter_marks(in, out, 60);
-        fclose(in);
-        fclose(out);
-        CHECK(n == 2);
-        CHECK(strcmp(read_all("t_out.txt", buf, sizeof buf), "Bondar 74\nSavchuk 60\n") == 0);
-    } else {
-        failed++;
-        printf("FAIL: t_in.txt / t_out.txt not opened\n");
-    }
 
     printf("passed %d, failed %d\n", passed, failed);
     return failed;
